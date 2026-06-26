@@ -1,0 +1,10 @@
+{
+  "name": "reel-video-player",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Accessible, keyboard-driven HTML5 video player in vanilla JavaScript.",
+  "scripts": {
+    "dev": "npx --yes serve . -l 4321",
+    "preview": "npx --yes serve . -l 4321"
+  }
+}

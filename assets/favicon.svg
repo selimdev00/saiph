@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Reel">
+  <rect width="32" height="32" rx="7" fill="#221e19"/>
+  <!-- tick-marked scrubber rail -->
+  <rect x="6" y="23" width="20" height="2.4" rx="1.2" fill="#4a443c"/>
+  <rect x="6" y="23" width="9" height="2.4" rx="1.2" fill="#f5a623"/>
+  <!-- amber playhead -->
+  <rect x="14" y="20.5" width="2" height="7.4" rx="1" fill="#f5a623"/>
+  <!-- play triangle -->
+  <path d="M12.5 7.5 21 13l-8.5 5.5z" fill="#f5a623"/>
+</svg>

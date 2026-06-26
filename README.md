@@ -1,30 +1,44 @@
-![Video Player Web App](./design/desktop.png)
+# Reel
 
-**Challenge Title**
-Video Player Web App
+An accessible, keyboard-driven HTML5 video player built in vanilla JavaScript. No frameworks, no dependencies, no build step.
 
-**Challenge Description**
-You'll learn how to use HTML5 video API and handle user interactions. Plus, you'll also learn how to use DOM manipulation to manipulate the data.
+The interface takes an editing-console point of view: a warm-graphite control surface, a single amber signal color for everything interactive, a monospace tabular timecode, and a tick-marked seek scrubber with a thin playhead.
 
-**Difficulty Level**
-hard
+## Features
 
-**Tags**
-FRONTEND
+- Play / pause as a single toggle, stop, and a real previous / next playlist
+- Click-and-drag seek scrubber with buffered underlay, tick marks, and a hover time tooltip
+- Volume slider plus mute that remembers and restores the previous level
+- Remaining or total time readout (click the timecode to switch)
+- Fullscreen on the player surface, with picture-in-picture where supported
+- Captions via a WebVTT `<track>` and a CC toggle
+- Loading, ready, buffering, ended (with auto-advance), and error states
 
-**Learning**
-You'll learn to use [HTML5 video API](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Video_and_audio_APIs) and handle user interactions. Plus, you'll also learn how to use DOM manipulation to manipulate the DOM.
+## Accessibility
 
-**Requirements**
+- Every control is a real `<button>` or native range input with an accurate, state-aware accessible name
+- Full keyboard support: `Space` / `K` play, `←` `→` seek, `↑` `↓` volume, `M` mute, `F` fullscreen, `C` captions, `N` / `P` next / previous
+- Visible amber focus rings, a skip link, a single `<h1>`, landmark regions, and a polite live region for status
+- Honors `prefers-reduced-motion`
 
-- Play/Pause a video
-- Stop a video
-- Increase or Decrease the volume of the video
-- Mute a video
-- See the video in full-screen
-- Show remaining video time
-- Navigate to the next or previous video in their playlist
+## State is event-driven
 
-I hope you'll enjoy building this challenge.
+The native `<video>` element is the single source of truth. The UI is a projection of media events (`play`, `pause`, `volumechange`, `timeupdate`, `progress`, `fullscreenchange`, `ended`), never a parallel boolean that can drift. The visual progress fill is driven by `requestAnimationFrame` while playing for smoothness; the text timecode and ARIA values come from `timeupdate`.
 
-Feel free to share your solution on the website or on social media and tag us.
+## Run locally
+
+```bash
+npm run dev      # serves on http://localhost:4321
+# or open index.html directly
+```
+
+The first clip is self-hosted; the rest of the playlist streams from a public sample bucket.
+
+## Structure
+
+```
+index.html                 markup + inline icon sprite
+assets/styles/style.css     design system + components
+assets/scripts/script.js    player logic
+assets/captions/reel.en.vtt captions for the first clip
+```

@@ -2,71 +2,244 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML JavaScript Video Player</title>
-    <link rel="stylesheet" href="./assets/styles/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reel - a precise web video player</title>
+  <meta name="description"
+    content="Reel is a keyboard-driven, fully accessible HTML5 video player with a tick-marked seek scrubber, monospace timecode, and a working playlist. Built in vanilla JavaScript.">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Reel - a precise web video player">
+  <meta property="og:description"
+    content="Keyboard-driven, accessible HTML5 video player with a tick-marked scrubber and monospace timecode.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles/style.css">
 </head>
 
 <body>
-    <div class="player__wrapper">
-        <div class="player__box">
-            <div class="player">
-                <div class="player__screen is-loading">
-                    <img id="placeholder" class="player__screen__placeholder" src="./assets/images/placeholder.jpeg" alt="">
+  <a class="skip-link" href="#player">Skip to player</a>
 
-                    <video id="video" class="player__screen__video" src=""></video>
-                </div>
-                <div class="player__panel">
-                    <div class="player__controls">
-                        <div class="player__control player__icon">
-                            <img src="./assets/icons/backward.svg" alt="backward">
-                        </div>
-                        <div data-controls="play" class="player__control player__icon">
-                            <img src="./assets/icons/play.svg" alt="play">
-                        </div>
-                        <div data-controls="pause" class="player__control player__icon">
-                            <img src="./assets/icons/pause.svg" alt="pause">
-                        </div>
-                        <div class="player__control player__icon">
-                            <img src="./assets/icons/forward.svg" alt="forward">
-                        </div>
-                        <div data-controls="stop" class="player__control player__icon">
-                            <img src="./assets/icons/stop.svg" alt="stop">
-                        </div>
-                    </div>
+  <!-- Icon sprite: stroke-based, recolored via currentColor -->
+  <svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0">
+    <defs>
+      <symbol id="i-prev" viewBox="0 0 24 24">
+        <path d="M18 6v12L9 12zM6 5v14" />
+      </symbol>
+      <symbol id="i-next" viewBox="0 0 24 24">
+        <path d="M6 6v12l9-6zM18 5v14" />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24">
+        <path d="M7 5.5v13l11-6.5z" />
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24">
+        <path d="M8.5 5v14M15.5 5v14" />
+      </symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24">
+        <rect x="6" y="6" width="12" height="12" rx="2" />
+      </symbol>
+      <symbol id="i-replay" viewBox="0 0 24 24">
+        <path d="M5 12a7 7 0 1 0 2.1-5M5 4v4h4" />
+      </symbol>
+      <symbol id="i-vol" viewBox="0 0 24 24">
+        <path d="M4 9v6h4l5 4V5L8 9zM17 9.5a4 4 0 0 1 0 5M19.5 7a8 8 0 0 1 0 10" />
+      </symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24">
+        <path d="M4 9v6h4l5 4V5L8 9zM22 9l-6 6M16 9l6 6" />
+      </symbol>
+      <symbol id="i-cc" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="3" />
+        <path d="M10 10.2a2.5 2.5 0 1 0 0 3.6M17 10.2a2.5 2.5 0 1 0 0 3.6" />
+      </symbol>
+      <symbol id="i-pip" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2.5" />
+        <rect x="12" y="11" width="7" height="5.5" rx="1.5" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-fs-enter" viewBox="0 0 24 24">
+        <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+      </symbol>
+      <symbol id="i-fs-exit" viewBox="0 0 24 24">
+        <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+      </symbol>
+    </defs>
+  </svg>
 
-                    <div class="player__progress">
-                        <div class="player__progress__bar player__icon">
-                            <div class="player__progress__bar__inner"></div>
-                        </div>
+  <main id="main" class="shell">
+    <header class="masthead">
+      <a class="wordmark" href="./" aria-label="Reel home">
+        <span class="wordmark__led" aria-hidden="true"></span>
+        <span class="wordmark__name">REEL</span>
+        <span class="wordmark__sep" aria-hidden="true">/</span>
+        <span class="wordmark__tag">color grade reel</span>
+      </a>
+      <p class="masthead__status" aria-hidden="true">
+        <span class="masthead__dot" data-status-dot></span>
+        <span data-status-label>standby</span>
+      </p>
+      <h1 class="visually-hidden">Reel, an accessible web video player</h1>
+    </header>
 
-                        <div class="player__progress__timeline">
-                            <span>10:35</span>
-                            <span>/</span>
-                            <span>15:00</span>
-                        </div>
-                    </div>
+    <div class="stage">
+      <div class="stage__main">
+        <section id="player" class="player" aria-label="Video player" data-state="loading" tabindex="-1">
+          <div class="player__screen">
+            <video id="video" class="player__video" playsinline preload="metadata"
+              poster="./assets/images/poster-reel.jpg">
+              <track kind="captions" src="./assets/captions/reel.en.vtt" srclang="en" label="English">
+            </video>
 
-                    <div class="player__sound">
-                        <img class="player__sound__icon player__icon" src="./assets/icons/sound.svg" alt="sound">
-
-                        <div class="player__sound__bar player__icon">
-                            <div class="player__sound__bar__inner"></div>
-                        </div>
-
-                    </div>
-
-                    <div data-controls="fullscreen" class="player__full player__icon">
-                        <img src="./assets/icons/fullscreen.svg" alt="fullscreen">
-                    </div>
-                </div>
+            <div class="overlay overlay--loading" role="status" aria-live="polite">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="visually-hidden">Loading video</span>
             </div>
+
+            <button class="overlay overlay--poster" type="button" data-action="toggle" aria-label="Play video">
+              <span class="play-badge" aria-hidden="true">
+                <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg>
+              </span>
+            </button>
+
+            <div class="overlay overlay--ended" aria-hidden="true">
+              <p class="overlay__title" data-ended-title>Clip ended</p>
+              <div class="overlay__actions">
+                <button type="button" class="btn-ghost" data-action="replay">
+                  <svg class="icon" aria-hidden="true"><use href="#i-replay" /></svg> Replay
+                </button>
+                <button type="button" class="btn-ghost" data-action="next" data-ended-next>
+                  <svg class="icon" aria-hidden="true"><use href="#i-next" /></svg> Play next
+                </button>
+              </div>
+            </div>
+
+            <div class="overlay overlay--error" role="alert" aria-hidden="true">
+              <p class="overlay__title">This clip could not be loaded.</p>
+              <button type="button" class="btn-ghost" data-action="retry">
+                <svg class="icon" aria-hidden="true"><use href="#i-replay" /></svg> Try again
+              </button>
+            </div>
+
+            <div class="scrub-tip" data-scrub-tip aria-hidden="true">00:00</div>
+
+            <div class="seek-flash seek-flash--back" data-flash="back" aria-hidden="true">
+              <svg class="icon" aria-hidden="true"><use href="#i-prev" /></svg>
+              <span>10</span>
+            </div>
+            <div class="seek-flash seek-flash--fwd" data-flash="fwd" aria-hidden="true">
+              <span>10</span>
+              <svg class="icon" aria-hidden="true"><use href="#i-next" /></svg>
+            </div>
+          </div>
+
+          <div class="player__panel">
+            <div class="seek">
+              <div class="seek__rail" data-seek-rail>
+                <div class="seek__buffered" data-buffered></div>
+                <div class="seek__played" data-played></div>
+                <div class="seek__ticks" aria-hidden="true"></div>
+                <div class="seek__head" data-head></div>
+              </div>
+              <input class="seek__input" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek"
+                aria-valuetext="00:00 of 00:00" data-seek>
+            </div>
+
+            <div class="controls">
+              <div class="controls__cluster">
+                <button type="button" class="ctl" data-action="prev" aria-label="Previous clip">
+                  <svg class="icon" aria-hidden="true"><use href="#i-prev" /></svg>
+                </button>
+                <button type="button" class="ctl ctl--primary" data-action="toggle" aria-label="Play"
+                  aria-pressed="false">
+                  <svg class="icon icon--play" aria-hidden="true"><use href="#i-play" /></svg>
+                  <svg class="icon icon--pause" aria-hidden="true"><use href="#i-pause" /></svg>
+                </button>
+                <button type="button" class="ctl" data-action="next" aria-label="Next clip">
+                  <svg class="icon" aria-hidden="true"><use href="#i-next" /></svg>
+                </button>
+                <button type="button" class="ctl" data-action="stop" aria-label="Stop">
+                  <svg class="icon" aria-hidden="true"><use href="#i-stop" /></svg>
+                </button>
+              </div>
+
+              <button type="button" class="timecode" data-action="toggle-tc"
+                aria-label="Toggle remaining and total time">
+                <span class="tc tc--current" data-current>00:00</span>
+                <span class="tc tc--sep" aria-hidden="true">/</span>
+                <span class="tc tc--rest" data-rest>-00:00</span>
+              </button>
+
+              <div class="controls__cluster controls__cluster--end">
+                <div class="volume" data-volume>
+                  <button type="button" class="ctl" data-action="mute" aria-label="Mute" aria-pressed="false">
+                    <svg class="icon icon--vol" aria-hidden="true"><use href="#i-vol" /></svg>
+                    <svg class="icon icon--muted" aria-hidden="true"><use href="#i-mute" /></svg>
+                  </button>
+                  <div class="volume__rail" data-vol-rail>
+                    <div class="volume__fill" data-vol-fill></div>
+                  </div>
+                  <input class="volume__input" type="range" min="0" max="100" value="100" step="1"
+                    aria-label="Volume" aria-valuetext="100%" data-vol>
+                </div>
+
+                <button type="button" class="ctl ctl--toggle" data-action="captions" aria-label="Captions"
+                  aria-pressed="false" data-cc hidden>
+                  <svg class="icon" aria-hidden="true"><use href="#i-cc" /></svg>
+                </button>
+                <button type="button" class="ctl" data-action="pip" aria-label="Picture in picture" data-pip hidden>
+                  <svg class="icon" aria-hidden="true"><use href="#i-pip" /></svg>
+                </button>
+                <button type="button" class="ctl" data-action="fullscreen" aria-label="Enter full screen"
+                  aria-pressed="false" data-fs>
+                  <svg class="icon icon--fs-enter" aria-hidden="true"><use href="#i-fs-enter" /></svg>
+                  <svg class="icon icon--fs-exit" aria-hidden="true"><use href="#i-fs-exit" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Now-playing info (title + byline + description) -->
+        <section class="info" aria-label="Now playing">
+          <h2 class="info__title" data-clip-title>Studio Reel</h2>
+          <div class="info__byline">
+            <span class="info__avatar" aria-hidden="true">RS</span>
+            <span class="info__channel">
+              <span class="info__channel-name">Reel Studio</span>
+              <span class="info__channel-sub" data-clip-pos>Clip 01 of 08</span>
+            </span>
+            <span class="badge" data-clip-tag>Base grade</span>
+          </div>
+          <div class="info__desc">
+            <p class="info__stat" data-clip-stat>1280&times;720 &middot; 00:10 &middot; H.264</p>
+            <p data-clip-desc>An ungraded reference pass.</p>
+          </div>
+        </section>
+      </div>
+
+      <aside class="rail" aria-label="Up next">
+        <div class="rail__head">
+          <h2 class="rail__title">Up next</h2>
+          <span class="rail__count" data-pl-count>0</span>
         </div>
+        <ol class="rail__list" data-playlist></ol>
+        <p class="rail__hint">
+          <kbd>Space</kbd> play <kbd>&larr;</kbd><kbd>&rarr;</kbd> seek <kbd>M</kbd> mute <kbd>F</kbd> full screen
+        </p>
+      </aside>
     </div>
 
-    <script src="./assets/scripts/script.js"></script>
+    <footer class="site-footer">
+      <span class="site-footer__mark">REEL</span>
+      <span class="site-footer__meta">vanilla javascript &middot; html5 media &middot; no dependencies</span>
+    </footer>
+  </main>
+
+  <div class="visually-hidden" role="status" aria-live="polite" data-live></div>
+
+  <script src="./assets/scripts/script.js"></script>
 </body>
 
 </html>
